@@ -110,13 +110,13 @@ void loop()
 
 speed calibrateTrackSignal(int raw_x, int raw_y)
 {
-    // Serial.println(raw_x);
-    // Serial.println(raw_y);
-
+    speed ret;
+    if (raw_x == 0 || raw_y == 0){
+      return ret;
+    }
+    
     int x = map(raw_x, TrackMinRawValue, TrackMaxRawValue, trackMinSpeed, trackMaxSpeed);
     int y = map(raw_y, TrackMinRawValue, TrackMaxRawValue, trackMinSpeed, trackMaxSpeed);
-
-    speed ret;
 
     // // Check if joystick is in the center
     if (abs(x) < TrackDeadZoneThreshold && abs(y) < TrackDeadZoneThreshold)
@@ -175,10 +175,16 @@ speed calibrateTrackSignal(int raw_x, int raw_y)
 speed calibratePropellerSignal(int raw_x, int raw_y)
 {
     // Mapping raw input to speed range
+    speed propeller;
+    if (raw_x == 0 && raw_y == 0){
+      propeller.Left = 90;
+      propeller.Right = 90;
+      return propeller;
+    }
+
     int x = map(raw_x, PropellerMinRawValue, PropellerMaxRawValue, 0, 180);
     int y = map(raw_y, PropellerMinRawValue, PropellerMaxRawValue, 0, 180);
 
-    speed propeller;
 
     // Pause or neutral
     if (abs(x - 90) < SmallMovementThreshold && abs(y - 90) < SmallMovementThreshold) {
@@ -297,7 +303,7 @@ void pumps()
 // ACTUATOR CONTROL ----------------------------------
 void actuator(){
   int value = pulseIn(actuatorSignal, HIGH); // Range : 800 - 2200
-  Serial.println(value);
+  // Serial.println(value);
   if(value > 800 && value < 1000){ // COMPRESS
     digitalWrite(actuatorA, HIGH);
     digitalWrite(actuatorB, LOW);
